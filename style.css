@@ -1,0 +1,19 @@
+/* Remove default spacing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  background-color: white;
+  color: black;
+  overflow-x: hidden;
+}
+
+.title {
+  text-align-last: center;
+  padding: 30px;
+}
+
