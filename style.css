@@ -69,7 +69,7 @@ form {
   cursor: pointer;
 }
 
-form > #submit-button:hover {
+#submit-button:hover {
   opacity: 0.9;
 }
 

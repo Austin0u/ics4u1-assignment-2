@@ -1,14 +1,9 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
-const result = (document.getElementById("result") as HTMLInputElement);
+const resultContainer = document.getElementById("result-container") as HTMLElement;
 
-result.style.visibility = "hidden";
+resultContainer.style.visibility = "hidden";
 
 // Displaying results
-function displayRoots(value: string): void { // temporary
-    result.style.visibility = "visible";
-    result.textContent = value;
-}
-
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
     let equation = "";
 
@@ -46,17 +41,17 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
 }
 
 function displayResults(equation: string, p: number, q: number, discriminant: number, roots: number[]): void {
-    const resultContainer = document.getElementById("result-container") as HTMLElement;
+    resultContainer.style.visibility = "visible";
 
     // Change equation display
     const equationDisplay = document.getElementById("equation-display") as HTMLElement;
     equationDisplay.textContent = equation;
-    resultContainer.innerHTML = `
-        <p>p = ${p.toFixed(4)}</p>
-        <p>q = ${q.toFixed(4)}</p>
-        <p>discriminant = ${discriminant.toFixed(4)}</p>
-        <p>${roots}</p>
-    `;
+
+    // Result display (temp)
+    const result = (document.getElementById("result") as HTMLInputElement);
+    result.textContent = `x1=${roots[0].toFixed(4)}, x2=${roots[1].toFixed(4)}, x3=${roots[2].toFixed(4)}`;
+
+    console.log(equation, p, q, discriminant, roots); // to get rid of problems temporarily
 }
 
 // Methods to solve for roots
@@ -97,18 +92,18 @@ form?.addEventListener("submit", (event) => {
 
     if (discriminant < 0) { // three distinct roots 
         const roots = trigonometricMethod(a, b, p, q);
-        displayRoots(`x1=${roots[0].toFixed(4)}, x2=${roots[1].toFixed(4)}, x3=${roots[2].toFixed(4)}`);
+        displayResults(equation, p, q, discriminant, roots);
     } else if (discriminant > 0) { // one real root and two complex roots
         const root = cardanosMethod(a, b, p, q);
-        displayRoots(`x1 = ${root.toFixed(4)} (real), x2 = complex, x3 = complex`);
+        // displayResults(equation, p, q, discriminant, root); // need to somehow show the single root in the array?
     } else { // one real root with a double, or a triple root
         const rootOne = (-b + Math.sqrt(discriminant)) / (2 * a);
 
         if (p === 0 && q === 0) { // triple root
-            displayRoots(`x=${rootOne} (triple root)`);
+            displayResults(equation, p, q, discriminant, [rootOne, rootOne, rootOne]);
         } else { // one real root with a double
             const rootTwo = Math.cbrt(-q / 2) - b / (3 * a);
-            displayRoots(`x1=${rootOne} (double root), x2=${rootTwo}`);
+            displayResults(equation, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
         }
     }
 })
