@@ -1,7 +1,5 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
-const resultContainer = document.getElementById("result-container") as HTMLElement;
-
-resultContainer.style.visibility = "hidden";
+const resultsContainer = document.getElementById("results-container") as HTMLElement;
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -41,17 +39,69 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
 }
 
 function displayResults(equation: string, p: number, q: number, discriminant: number, roots: number[]): void {
-    resultContainer.style.visibility = "visible";
+    // format roots for display (and determine if there are complex roots)
+    let rootOne: string = roots[0].toFixed(2);
+    let rootTwo: string = "N/A";
+    let rootThree: string = "N/A";
 
-    // Change equation display
-    const equationDisplay = document.getElementById("equation-display") as HTMLElement;
-    equationDisplay.textContent = equation;
+    if (roots.length != 1) {
+        rootTwo = roots[1].toFixed(2);
+        rootThree = roots[2].toFixed(2);
+    }
 
-    // Result display (temp)
-    const result = (document.getElementById("result") as HTMLInputElement);
-    result.textContent = `x1=${roots[0].toFixed(4)}, x2=${roots[1].toFixed(4)}, x3=${roots[2].toFixed(4)}`;
+    // create new html inside the container
+    const resultsHTML = `
+        <h3 class="equation-heading">${equation}</h3>
+        <div class="results-layout">
+            <div class="data-section">
+                <div class="value-card">
+                    <div class="value-pair">
+                        <span class="value-label">p:</span>
+                        <span class="value-content">${p.toFixed(5)}</span>
+                    </div>
+                    <div class="card-divider"></div>
+                    <div class="value-pair">
+                        <span class="value-label">q:</span>
+                        <span class="value-content">${q.toFixed(5)}</span>
+                    </div>
+                    <div class="card-divider"></div>
+                    <div class="value-pair">
+                        <span class="value-label">Discriminant:</span>
+                        <span class="value-content">${discriminant.toFixed(5)}</span>
+                    </div>
+                </div>
+                <div class="roots-table">
+                    <div class="roots-header">
+                        <span>Root</span>
+                        <span>x</span>
+                        <span>y</span>
+                    </div>
+                    <div class="roots-row">
+                        <span>Root 1</span>
+                        <span>${rootOne}</span>
+                        <span>0</span>
+                    </div>
+                    <div class="roots-row">
+                        <span>Root 2</span>
+                        <span>${rootTwo}</span>
+                        <span>0</span>
+                    </div>
+                    <div class="roots-row">
+                        <span>Root 3</span>
+                        <span>${rootThree}</span>
+                        <span>0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="graph-section">
+                <div class="canvas-placeholder">put graph here</div>
+            </div>
+        </div>
+    `;
 
-    console.log(equation, p, q, discriminant, roots); // to get rid of problems temporarily
+    // replace/insert html into container
+    resultsContainer.innerHTML = resultsHTML;
+    console.log(equation, p, q, discriminant, roots);
 }
 
 // Methods to solve for roots
@@ -64,7 +114,7 @@ function trigonometricMethod(a: number, b: number, p: number, q: number): number
     const rootThree = 2 * Math.sqrt(-p / 3) * Math.cos(theta + 4 * Math.PI / 3) + shift;
 
     return [rootOne, rootTwo, rootThree];
-} 
+}
 
 function cardanosMethod(a: number, b: number, p: number, q: number): number {
     const m = (-q / 2);
@@ -76,7 +126,8 @@ function cardanosMethod(a: number, b: number, p: number, q: number): number {
 // Form submission
 form?.addEventListener("submit", (event) => {
     event.preventDefault();
-    
+
+    // form data
     const formData = new FormData(form);
 
     const a: number = Number(formData.get("a"));
@@ -84,18 +135,20 @@ form?.addEventListener("submit", (event) => {
     const c: number = Number(formData.get("c"));
     const d: number = Number(formData.get("d"));
 
-    const p = (3 * a * c - Math.pow(b, 2))/(3 * a * a);
-    const q = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3))/(27 * Math.pow(a, 3));
+    // Calculate key values
+    const p = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
+    const q = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
 
     const discriminant = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
-    const equation = getCubicEquation( a, b, c, d);
+    const equation = getCubicEquation(a, b, c, d);
 
+    // Root cases
     if (discriminant < 0) { // three distinct roots 
         const roots = trigonometricMethod(a, b, p, q);
-        displayResults(equation, p, q, discriminant, roots);
+        displayResults(equation, p, q, discriminant, [roots[0], roots[1], roots[2]]);
     } else if (discriminant > 0) { // one real root and two complex roots
         const root = cardanosMethod(a, b, p, q);
-        // displayResults(equation, p, q, discriminant, root); // need to somehow show the single root in the array?
+        displayResults(equation, p, q, discriminant, [root]);
     } else { // one real root with a double, or a triple root
         const rootOne = (-b + Math.sqrt(discriminant)) / (2 * a);
 

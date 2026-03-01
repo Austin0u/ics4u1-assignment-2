@@ -18,7 +18,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
 }
 
 .title {
@@ -27,6 +26,7 @@ body {
   font-size: 32px;
 }
 
+/* Form */
 form {
   display: flex;
   gap: 20px;
@@ -73,13 +73,120 @@ form {
   opacity: 0.9;
 }
 
-.result-container {
-  margin-top: 40px;
-  font-size: 18px;
+/* Results section */
+#results-section {
+  margin-top: 60px;
+  padding: 0 60px;
+  width: 100vh;
+}
+
+.equation-heading {
   text-align: center;
-}
-
-#result {
+  font-size: 20px;
   color: #333;
+  margin-bottom: 30px;
+  font-weight: bold;
 }
 
+.results-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.data-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.value-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+}
+
+.card-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.value-pair {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.value-label {
+  font-weight: bold;
+  color: #666;
+  font-size: 12px;
+}
+
+.value-content {
+  color: #333;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.roots-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+}
+
+.roots-header {
+  background-color: #ff8704;
+  color: white;
+  padding: 10px 12px;
+  font-weight: bold;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.roots-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 12px;
+}
+
+.roots-row:last-child {
+  border-bottom: none;
+}
+
+.graph-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.canvas-placeholder {
+  background: #fafafa;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 14px;
+  border-radius: 8px;
+}
