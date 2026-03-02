@@ -22,8 +22,16 @@ body {
 
 .title {
   color: #ff8704;
-  margin-bottom: 40px;
+  margin: 20px 0px;
   font-size: 32px;
+}
+
+#cat {
+  max-height: 120px;
+}
+
+#cat:hover {
+  scale: 1.2;
 }
 
 /* Form */
@@ -84,7 +92,7 @@ form {
   text-align: center;
   font-size: 20px;
   color: #333;
-  margin-bottom: 30px;
+  margin: 30px 0px;
   font-weight: bold;
 }
 
