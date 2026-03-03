@@ -38,18 +38,26 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
     return equation;
 }
 
+// function drawGraph (canvas): void {
+//     const canvas = document.getElementById("canvas");
+//     const ctx = canvas.getContext("2d");
+
+//     ctx.fillStyle = "green";
+//     ctx.fillRect(10, 10, 150, 100);
+// }
+
 function displayResults(equation: string, p: number, q: number, discriminant: number, roots: number[]): void {
     // format roots for display (and determine if there are complex roots)
     let rootOne: string = roots[0].toFixed(2);
     let rootTwo: string = "N/A";
-    let rootThree: string = "N/A";
+    let rootThree: string = "N/A"; // to change to arrays with (x,y)
 
     if (roots.length != 1) {
         rootTwo = roots[1].toFixed(2);
         rootThree = roots[2].toFixed(2);
     }
 
-    // create new html inside the container
+    // create new html inside the container (temp, to replace later)
     const resultsHTML = `
         <h3 class="equation-heading">${equation}</h3>
         <div class="results-layout">
@@ -94,7 +102,7 @@ function displayResults(equation: string, p: number, q: number, discriminant: nu
                 </div>
             </div>
             <div class="graph-section">
-                <div class="canvas-placeholder">put graph here</div>
+                <canvas id="graph" width="600" height="400"></canvas>
             </div>
         </div>
     `;
@@ -135,28 +143,32 @@ form?.addEventListener("submit", (event) => {
     const c: number = Number(formData.get("c"));
     const d: number = Number(formData.get("d"));
 
-    // Calculate key values
-    const p = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
-    const q = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
+    if (a != 0) { // a value cannot be 0
+        // Calculate key values
+        const p = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
+        const q = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
 
-    const discriminant = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
-    const equation = getCubicEquation(a, b, c, d);
+        const discriminant = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
+        const equation = getCubicEquation(a, b, c, d);
 
-    // Root cases
-    if (discriminant < 0) { // three distinct roots 
-        const roots = trigonometricMethod(a, b, p, q);
-        displayResults(equation, p, q, discriminant, [roots[0], roots[1], roots[2]]);
-    } else if (discriminant > 0) { // one real root and two complex roots
-        const root = cardanosMethod(a, b, p, q);
-        displayResults(equation, p, q, discriminant, [root]);
-    } else { // one real root with a double, or a triple root
-        const rootOne = (-b + Math.sqrt(discriminant)) / (2 * a);
-
-        if (p === 0 && q === 0) { // triple root
-            displayResults(equation, p, q, discriminant, [rootOne, rootOne, rootOne]);
-        } else { // one real root with a double
-            const rootTwo = Math.cbrt(-q / 2) - b / (3 * a);
-            displayResults(equation, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
+        // Root cases
+        if (discriminant < 0) { // three distinct roots 
+            const roots = trigonometricMethod(a, b, p, q);
+            displayResults(equation, p, q, discriminant, [roots[0], roots[1], roots[2]]);
+        } else if (discriminant > 0) { // one real root and two complex roots
+            const root = cardanosMethod(a, b, p, q);
+            displayResults(equation, p, q, discriminant, [root]);
+        } else { // one real root with a double, or a triple root
+            // const rootOne = (-b + Math.sqrt(discriminant)) / (2 * a);
+            const rootOne = cardanosMethod(a, b, p, q)
+            if (p === 0 && q === 0) { // triple root
+                displayResults(equation, p, q, discriminant, [rootOne, rootOne, rootOne]);
+            } else { // one real root with a double
+                const rootTwo = Math.cbrt(-q / 2) - b / (3 * a);
+                displayResults(equation, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
+            }
         }
+    } else { // give an alert when a = 0
+        console.log("a cannot be 0")
     }
 })
