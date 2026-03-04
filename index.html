@@ -36,7 +36,54 @@
         <input type="submit" id="submit-button" value="Solve Cubic" />
       </form>
     </div>
-    <div id="results-container"></div>
+    <div id="results-container">
+      <h3 id="result-equation"></h3>
+      <div class="results-layout">
+        <div class="data-section">
+          <div class="value-card">
+            <div class="value-pair">
+              <span class="value-label">p:</span>
+              <span id="result-p" class="value-content">0</span>
+            </div>
+            <div class="card-divider"></div>
+            <div class="value-pair">
+              <span class="value-label">q:</span>
+              <span id="result-q" class="value-content">0</span>
+            </div>
+            <div class="card-divider"></div>
+            <div class="value-pair">
+              <span class="value-label">Discriminant:</span>
+              <span id="result-discriminant" class="value-content">0</span>
+            </div>
+          </div>
+          <div class="roots-table">
+            <div class="roots-header">
+              <span>Root</span>
+              <span>x</span>
+              <span>y</span>
+            </div>
+            <div class="roots-row">
+              <span>Root 1</span>
+              <span id="root1-x">0</span>
+              <span id="root1-y">0</span>
+            </div>
+            <div class="roots-row">
+              <span>Root 2</span>
+              <span id="root2-x">0</span>
+              <span id="root2-y">0</span>
+            </div>
+            <div class="roots-row">
+              <span>Root 3</span>
+              <span id="root3-x">0</span>
+              <span id="root3-y">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="graph-section">
+          <canvas id="graph" width="700" height="700"></canvas>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/script.ts"></script>
 </body>
 

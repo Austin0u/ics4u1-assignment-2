@@ -1,5 +1,6 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
 const resultsContainer = document.getElementById("results-container") as HTMLElement;
+resultsContainer.style.visibility = "hidden";
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -38,78 +39,37 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
     return equation;
 }
 
-// function drawGraph (canvas): void {
-//     const canvas = document.getElementById("canvas");
-//     const ctx = canvas.getContext("2d");
+function updateElementText(id: string, text: string): void {
+    const element = document.getElementById(id) as HTMLElement;
+    element.textContent = text;
+}
 
-//     ctx.fillStyle = "green";
-//     ctx.fillRect(10, 10, 150, 100);
-// }
+function drawGraph(a: number, b: number, c: number, d: number, roots: number[]): void {
+    const canvas = document.getElementById("graph") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clears graph
+}
 
-function displayResults(equation: string, p: number, q: number, discriminant: number, roots: number[]): void {
+function displayResults(equation: string, a: number, b: number, c: number, d: number, p: number, q: number, discriminant: number, roots: number[]): void {
+    resultsContainer.style.visibility = "visible";
+
     // format roots for display (and determine if there are complex roots)
-    let rootOne: string = roots[0].toFixed(2);
-    let rootTwo: string = "N/A";
-    let rootThree: string = "N/A"; // to change to arrays with (x,y)
+    const rootOne = [roots[0].toFixed(2), "0"];
+    const rootTwo = (roots.length != 1) ? [roots[1].toFixed(2), "0"] : ["complex", "complex"];
+    const rootThree = (roots.length != 1) ? [roots[2].toFixed(2), "0"] : ["complex", "complex"];
 
-    if (roots.length != 1) {
-        rootTwo = roots[1].toFixed(2);
-        rootThree = roots[2].toFixed(2);
-    }
-
-    // create new html inside the container (temp, to replace later)
-    const resultsHTML = `
-        <h3 class="equation-heading">${equation}</h3>
-        <div class="results-layout">
-            <div class="data-section">
-                <div class="value-card">
-                    <div class="value-pair">
-                        <span class="value-label">p:</span>
-                        <span class="value-content">${p.toFixed(5)}</span>
-                    </div>
-                    <div class="card-divider"></div>
-                    <div class="value-pair">
-                        <span class="value-label">q:</span>
-                        <span class="value-content">${q.toFixed(5)}</span>
-                    </div>
-                    <div class="card-divider"></div>
-                    <div class="value-pair">
-                        <span class="value-label">Discriminant:</span>
-                        <span class="value-content">${discriminant.toFixed(5)}</span>
-                    </div>
-                </div>
-                <div class="roots-table">
-                    <div class="roots-header">
-                        <span>Root</span>
-                        <span>x</span>
-                        <span>y</span>
-                    </div>
-                    <div class="roots-row">
-                        <span>Root 1</span>
-                        <span>${rootOne}</span>
-                        <span>0</span>
-                    </div>
-                    <div class="roots-row">
-                        <span>Root 2</span>
-                        <span>${rootTwo}</span>
-                        <span>0</span>
-                    </div>
-                    <div class="roots-row">
-                        <span>Root 3</span>
-                        <span>${rootThree}</span>
-                        <span>0</span>
-                    </div>
-                </div>
-            </div>
-            <div class="graph-section">
-                <canvas id="graph" width="600" height="400"></canvas>
-            </div>
-        </div>
-    `;
-
-    // replace/insert html into container
-    resultsContainer.innerHTML = resultsHTML;
-    console.log(equation, p, q, discriminant, roots);
+    // Get result elements
+    updateElementText("result-equation", `${equation}`);
+    updateElementText("result-p", `${p.toFixed(5)}`);
+    updateElementText("result-q", `${q.toFixed(5)}`);
+    updateElementText("result-discriminant", `${discriminant.toFixed(5)}`);
+    updateElementText("root1-x", `${rootOne[0]}`);
+    updateElementText("root1-y", `${rootOne[1]}`);
+    updateElementText("root2-x", `${rootTwo[0]}`);
+    updateElementText("root2-y", `${rootTwo[1]}`);
+    updateElementText("root3-x", `${rootThree[0]}`);
+    updateElementText("root3-y", `${rootThree[1]}`);
+    drawGraph(a, b, c, d, roots);
 }
 
 // Methods to solve for roots
@@ -154,21 +114,22 @@ form?.addEventListener("submit", (event) => {
         // Root cases
         if (discriminant < 0) { // three distinct roots 
             const roots = trigonometricMethod(a, b, p, q);
-            displayResults(equation, p, q, discriminant, [roots[0], roots[1], roots[2]]);
+            displayResults(equation, a, b, c, d, p, q, discriminant, [roots[0], roots[1], roots[2]]);
         } else if (discriminant > 0) { // one real root and two complex roots
             const root = cardanosMethod(a, b, p, q);
-            displayResults(equation, p, q, discriminant, [root]);
+            displayResults(equation, a, b, c, d, p, q, discriminant, [root]);
         } else { // one real root with a double, or a triple root
             // const rootOne = (-b + Math.sqrt(discriminant)) / (2 * a);
             const rootOne = cardanosMethod(a, b, p, q)
             if (p === 0 && q === 0) { // triple root
-                displayResults(equation, p, q, discriminant, [rootOne, rootOne, rootOne]);
+                displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootOne, rootOne]);
             } else { // one real root with a double
                 const rootTwo = Math.cbrt(-q / 2) - b / (3 * a);
-                displayResults(equation, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
+                displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
             }
         }
     } else { // give an alert when a = 0
         console.log("a cannot be 0")
+        alert("Coefficient a cannot be 0. Please enter a valid cubic equation.");
     }
 })
