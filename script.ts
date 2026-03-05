@@ -47,12 +47,12 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
     // scaling (e.g. 10 = 5 units left and right, going from -5 to 5)
-    const xRange = 20;
-    const yRange = 20;
+    const xRange: number= 20;
+    const yRange: number = 20;
 
     // convert graph coords to canvas (aka translating cartesian coordinates)
     const toCanvasX = (x: number):number => {
-        return ((x + xRange / 2) / (xRange)) * WIDTH; //ex. x = 5, -> (5 + 10) / 20 becomes the % on the graph, then times width to scale it
+        return WIDTH / 2 + (x / xRange) * WIDTH; //ex. x = 5, -> (5 + 10) / 20 becomes the % on the graph, then times width to scale it
     }
 
     const toCanvasY = (y: number): number => {
@@ -62,15 +62,13 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     // Draw grid
     ctx.strokeStyle = "#e0e0e0";
     ctx.lineWidth = 0.5;
-
     for (let x = -xRange/2; x <= xRange/2; x++) { // vertical lines
-        const cx = toCanvasX(x);
+        const cx: number= toCanvasX(x);
         ctx.beginPath();
         ctx.moveTo(cx, 0);
         ctx.lineTo(cx, HEIGHT);
         ctx.stroke();
     }
-
     for (let y = -yRange/2; y <= yRange/2; y++) { // horizontal lines 
         const cy = toCanvasY(y);
         ctx.beginPath();
@@ -88,17 +86,25 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     ctx.stroke();
 
     // Draw curve
-    ctx.strokeStyle = "#000000";
+    ctx.strokeStyle = "#E49273";
     ctx.lineWidth = 2;
     // write for loop? can calculate y for each x and connect the dots or smthg
+    ctx.beginPath();
+    for (let x = -xRange/2; x < xRange/2; x+= 0.1) { // smaller step = more detailed curve
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d);
+        
+        ctx.lineTo(cx, cy);
+    }
+    ctx.stroke();
 
     // Draw roots as dots
-    ctx.fillStyle = "#E49273";
+    ctx.fillStyle = "#7180acff";
     for (const root of roots) {
         const cx = toCanvasX(root);
         const cy = toCanvasY(0);
         ctx.beginPath();
-        ctx.arc(cx, cy, 5, 0, Math.PI * 2); // makes a circle (x, y, radius, startAngle, endAngle)
+        ctx.arc(cx, cy, 4, 0, Math.PI * 2); // makes a circle (x, y, radius, startAngle, endAngle)
         ctx.fill();
     }
 };
@@ -109,8 +115,8 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
     // format roots for display (and determine if there are complex roots)
     roots.sort((a, b) => a - b); // to sort roots by x
     const rootOne = [roots[0].toFixed(2), "0"];
-    const rootTwo = (roots.length != 1) ? [roots[1].toFixed(2), "0"] : ["complex", "complex"];
-    const rootThree = (roots.length != 1) ? [roots[2].toFixed(2), "0"] : ["complex", "complex"];
+    const rootTwo = [(roots.length != 1) ? roots[1].toFixed(2) : "complex", "0"];
+    const rootThree = [(roots.length != 1) ? roots[2].toFixed(2) : "complex", "0"];
 
     // Get result elements
     (document.getElementById("result-equation") as HTMLInputElement).textContent = `${equation}`;
@@ -142,9 +148,9 @@ function trigonometricMethod(a: number, b: number, p: number, q: number): number
 }
 
 function cardanosMethod(a: number, b: number, p: number, q: number): number {
-    const m = (-q / 2);
-    const n = Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3));
-    const root = Math.cbrt(m + n) + Math.cbrt(m - n) - b / (3 * a);
+    // const m = (-q / 2);
+    // const n = Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3));
+    const root = Math.cbrt((-q / 2) + Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) + Math.cbrt((-q / 2) - Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) - b / (3 * a);
     return root;
 }
 
@@ -179,7 +185,7 @@ form?.addEventListener("submit", (event) => {
             if (p === 0 && q === 0) { // triple root
                 displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootOne, rootOne]);
             } else { // one real root with a double
-                const rootTwo = Math.cbrt(-q / 2) - b / (3 * a);
+                const rootTwo = Math.cbrt(q / 2) - b / (3 * a);
                 displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
             }
         }
