@@ -139,7 +139,8 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 60px;
+  padding: 0px 25px;
   font-size: 12px;
 }
 

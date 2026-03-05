@@ -1,6 +1,5 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
 const resultsContainer = document.getElementById("results-container") as HTMLElement;
-resultsContainer.style.visibility = "hidden";
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -114,7 +113,7 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
     const rootThree = (roots.length != 1) ? [roots[2].toFixed(2), "0"] : ["complex", "complex"];
 
     // Get result elements
-    (document.getElementById("result-equation") as HTMLInputElement).value = `${equation}`;
+    (document.getElementById("result-equation") as HTMLInputElement).textContent = `${equation}`;
     (document.getElementById("result-p") as HTMLInputElement).textContent = `${p.toFixed(5)}`;
     (document.getElementById("result-q") as HTMLInputElement).textContent = `${q.toFixed(5)}`;
     (document.getElementById("result-discriminant") as HTMLInputElement).textContent = `${discriminant.toFixed(5)}`;
