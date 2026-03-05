@@ -1,8 +1,6 @@
-import type { ChartConfiguration } from 'chart.js/auto';
-
 const form = document.getElementById("cubic-form") as HTMLFormElement;
 const resultsContainer = document.getElementById("results-container") as HTMLElement;
-// resultsContainer.style.visibility = "hidden";
+resultsContainer.style.visibility = "hidden";
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -41,42 +39,70 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
     return equation;
 }
 
-let xValues: number[] = [];
-let yValues: number[] = [];
-
-function generateData(value: string, i1: number, i2: number, step: number) {
-    for (let x = i1; x <= i2; x += step) {
-        yValues.push(eval(value));
-        xValues.push(x);
-    }
-}
-
 function drawGraph(a: number, b: number, c: number, d: number, roots: number[]): void {
     const canvas = document.getElementById("graph") as HTMLCanvasElement;
     const ctx = canvas.getContext("2d")!;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // clears graph
+    const WIDTH = ctx.canvas.width;
+    const HEIGHT = ctx.canvas.height;
 
-    generateData(`${a} * Math.pow(x, 3) + ${b} * Math.pow(x, 2) + ${c} * x + ${d}`, -10, 10, 0.5)
-    const config: ChartConfiguration = {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-                fill: false,
-                pointRadius: 1,
-                borderColor: "rgba(255,0,0,0.5)",
-                data: yValues
-            }]
-        },
-        options: {
-            scales: {
-                x: {title: { display: true, text: 'x' }},
-                y: {title: { display: true, text: 'y'}
-              }
-            }   
-        }
-    };
-}
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    // scaling (e.g. 10 = 5 units left and right, going from -5 to 5)
+    const xRange = 20;
+    const yRange = 20;
+
+    // convert graph coords to canvas (aka translating cartesian coordinates)
+    const toCanvasX = (x: number):number => {
+        return ((x + xRange / 2) / (xRange)) * WIDTH; //ex. x = 5, -> (5 + 10) / 20 becomes the % on the graph, then times width to scale it
+    }
+
+    const toCanvasY = (y: number): number => {
+        return HEIGHT / 2 - (y / yRange) * HEIGHT; // canvas y starts at top, so move to middle and subtract % of graph
+    }
+
+    // Draw grid
+    ctx.strokeStyle = "#e0e0e0";
+    ctx.lineWidth = 0.5;
+
+    for (let x = -xRange/2; x <= xRange/2; x++) { // vertical lines
+        const cx = toCanvasX(x);
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, HEIGHT);
+        ctx.stroke();
+    }
+
+    for (let y = -yRange/2; y <= yRange/2; y++) { // horizontal lines 
+        const cy = toCanvasY(y);
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(WIDTH, cy);
+        ctx.stroke();
+    }
+
+    // Draw axes
+    ctx.strokeStyle = "#aaaaaa";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, HEIGHT / 2); ctx.lineTo(WIDTH, HEIGHT / 2); // x
+    ctx.moveTo(WIDTH / 2, 0); ctx.lineTo(WIDTH / 2, HEIGHT); // y
+    ctx.stroke();
+
+    // Draw curve
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 2;
+    // write for loop? can calculate y for each x and connect the dots or smthg
+
+    // Draw roots as dots
+    ctx.fillStyle = "#ff0000";
+    for (const root of roots) {
+        const cx = toCanvasX(root);
+        const cy = toCanvasY(0);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2); // makes a circle (x, y, radius, startAngle, endAngle)
+        ctx.fill();
+    }
+};
 
 function displayResults(equation: string, a: number, b: number, c: number, d: number, p: number, q: number, discriminant: number, roots: number[]): void {
     resultsContainer.style.visibility = "visible";
@@ -88,27 +114,30 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
     const rootThree = (roots.length != 1) ? [roots[2].toFixed(2), "0"] : ["complex", "complex"];
 
     // Get result elements
-    (document.getElementById("result-equation") as HTMLInputElement).value =  `${equation}`;
-    (document.getElementById("result-p") as HTMLInputElement).textContent =  `${p.toFixed(5)}`;
-    (document.getElementById("result-q") as HTMLInputElement).textContent =  `${q.toFixed(5)}`;
+    (document.getElementById("result-equation") as HTMLInputElement).value = `${equation}`;
+    (document.getElementById("result-p") as HTMLInputElement).textContent = `${p.toFixed(5)}`;
+    (document.getElementById("result-q") as HTMLInputElement).textContent = `${q.toFixed(5)}`;
     (document.getElementById("result-discriminant") as HTMLInputElement).textContent = `${discriminant.toFixed(5)}`;
-    (document.getElementById("root1-x") as HTMLInputElement).textContent =  `${rootOne[0]}`;
-    (document.getElementById("root1-y") as HTMLInputElement).textContent =  `${rootOne[1]}`;
-    (document.getElementById("root2-x") as HTMLInputElement).textContent =  `${rootTwo[0]}`;
-    (document.getElementById("root2-y") as HTMLInputElement).textContent =  `${rootTwo[1]}`;
-    (document.getElementById("root3-x") as HTMLInputElement).textContent =  `${rootThree[0]}`;
-    (document.getElementById("root3-y") as HTMLInputElement).textContent =  `${rootThree[1]}`;
+    (document.getElementById("root1-x") as HTMLInputElement).textContent = `${rootOne[0]}`;
+    (document.getElementById("root1-y") as HTMLInputElement).textContent = `${rootOne[1]}`;
+    (document.getElementById("root2-x") as HTMLInputElement).textContent = `${rootTwo[0]}`;
+    (document.getElementById("root2-y") as HTMLInputElement).textContent = `${rootTwo[1]}`;
+    (document.getElementById("root3-x") as HTMLInputElement).textContent = `${rootThree[0]}`;
+    (document.getElementById("root3-y") as HTMLInputElement).textContent = `${rootThree[1]}`;
     drawGraph(a, b, c, d, roots);
 }
 
 // Methods to solve for roots
 function trigonometricMethod(a: number, b: number, p: number, q: number): number[] {
     const theta = (1 / 3) * Math.acos(-q / (2 * Math.sqrt(-Math.pow(p / 3, 3))));
-    const shift = -b / (3 * a);
 
-    const rootOne = 2 * Math.sqrt(-p / 3) * Math.cos(theta) + shift;
-    const rootTwo = 2 * Math.sqrt(-p / 3) * Math.cos(theta + 2 * Math.PI / 3) + shift;
-    const rootThree = 2 * Math.sqrt(-p / 3) * Math.cos(theta + 4 * Math.PI / 3) + shift;
+    const calcRoot = (angle: number): number => {
+        return 2 * Math.sqrt(-p / 3) * Math.cos(angle) -b / (3 * a);
+    }
+
+    const rootOne = calcRoot(theta);
+    const rootTwo = calcRoot(theta + 2 * Math.PI / 3);
+    const rootThree = calcRoot(theta + 4 * Math.PI / 3);
 
     return [rootOne, rootTwo, rootThree];
 }
