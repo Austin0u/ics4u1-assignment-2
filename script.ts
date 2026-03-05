@@ -94,7 +94,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     // write for loop? can calculate y for each x and connect the dots or smthg
 
     // Draw roots as dots
-    ctx.fillStyle = "#ff0000";
+    ctx.fillStyle = "#E49273";
     for (const root of roots) {
         const cx = toCanvasX(root);
         const cy = toCanvasY(0);

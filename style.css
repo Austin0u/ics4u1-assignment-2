@@ -1,3 +1,11 @@
+/* Colour Palette 
+--glaucous: #7180acff;
+--french-blue: #2b4570ff;
+--light-blue: #a8d0dbff;
+--tangerine-dream: #e49273ff;
+--taupe: #a37a74ff;
+*/
+
 * {
   margin: 0;
   padding: 0;
@@ -21,7 +29,7 @@ body {
 }
 
 .title {
-  color: #ff8704;
+  color: #2B4570;
   margin: 20px 0px;
   font-size: 32px;
 }
@@ -67,7 +75,7 @@ form {
 }
 
 #submit-button {
-  background-color: #ff8704;
+  background-color: #2B4570;
   color: white;
   padding: 25px 20px;
   border: none;
@@ -156,7 +164,7 @@ form {
 }
 
 .roots-header {
-  background-color: #ff8704;
+  background-color: #2B4570;
   color: white;
   padding: 10px 12px;
   font-weight: bold;
