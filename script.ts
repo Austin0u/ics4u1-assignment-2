@@ -3,7 +3,7 @@ const resultsContainer = document.getElementById("results-container") as HTMLEle
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
-    let equation = "";
+    let equation: string = "";
 
     // a term (x^3 coefficient)
     if (a === 1) {
@@ -43,33 +43,30 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     const ctx = canvas.getContext("2d")!;
     const WIDTH = ctx.canvas.width;
     const HEIGHT = ctx.canvas.height;
-
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    // scaling (e.g. 10 = 5 units left and right, going from -5 to 5)
-    const xRange: number= 20;
-    const yRange: number = 20;
+    const gridSize: number = 20; // scaling (e.g. 10 = 5 units left and right, going from -5 to 5). should be an even number
 
     // convert graph coords to canvas (aka translating cartesian coordinates)
-    const toCanvasX = (x: number):number => {
-        return WIDTH / 2 + (x / xRange) * WIDTH; //ex. x = 5, -> (5 + 10) / 20 becomes the % on the graph, then times width to scale it
+    const toCanvasX = (x: number): number => {
+        return WIDTH / 2 + (x / gridSize) * WIDTH; //ex. x = 5, -> (5 + 10) / 20 becomes the % on the graph, then times width to scale it
     }
 
     const toCanvasY = (y: number): number => {
-        return HEIGHT / 2 - (y / yRange) * HEIGHT; // canvas y starts at top, so move to middle and subtract % of graph
+        return HEIGHT / 2 - (y / gridSize) * HEIGHT; // canvas y starts at top, so move to middle and subtract % of graph
     }
 
     // Draw grid
     ctx.strokeStyle = "#e0e0e0";
     ctx.lineWidth = 0.5;
-    for (let x = -xRange/2; x <= xRange/2; x++) { // vertical lines
-        const cx: number= toCanvasX(x);
+    for (let x = -gridSize / 2; x <= gridSize / 2; x++) { // vertical lines
+        const cx: number = toCanvasX(x);
         ctx.beginPath();
         ctx.moveTo(cx, 0);
         ctx.lineTo(cx, HEIGHT);
         ctx.stroke();
     }
-    for (let y = -yRange/2; y <= yRange/2; y++) { // horizontal lines 
+    for (let y = -gridSize / 2; y <= gridSize / 2; y++) { // horizontal lines 
         const cy = toCanvasY(y);
         ctx.beginPath();
         ctx.moveTo(0, cy);
@@ -81,20 +78,19 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     ctx.strokeStyle = "#aaaaaa";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(0, HEIGHT / 2); ctx.lineTo(WIDTH, HEIGHT / 2); // x
-    ctx.moveTo(WIDTH / 2, 0); ctx.lineTo(WIDTH / 2, HEIGHT); // y
+    ctx.moveTo(0, HEIGHT / 2); ctx.lineTo(WIDTH, HEIGHT / 2); // x axis
+    ctx.moveTo(WIDTH / 2, 0); ctx.lineTo(WIDTH / 2, HEIGHT); // y axis
     ctx.stroke();
 
     // Draw curve
     ctx.strokeStyle = "#E49273";
     ctx.lineWidth = 2;
-    // write for loop? can calculate y for each x and connect the dots or smthg
     ctx.beginPath();
-    for (let x = -xRange/2; x < xRange/2; x+= 0.1) { // smaller step = more detailed curve
+    for (let x = -gridSize / 2; x < gridSize / 2; x += gridSize / 125) { // smaller step = more detailed curve. Auto adjusts to grid size/scale
         const cx = toCanvasX(x);
-        const cy = toCanvasY(a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d);
+        const cy = toCanvasY(a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d); // use abcd values to calculate y for each x
         
-        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx, cy)
     }
     ctx.stroke();
 
@@ -114,9 +110,9 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
 
     // format roots for display (and determine if there are complex roots)
     roots.sort((a, b) => a - b); // to sort roots by x
-    const rootOne = [roots[0].toFixed(2), "0"];
-    const rootTwo = [(roots.length != 1) ? roots[1].toFixed(2) : "complex", "0"];
-    const rootThree = [(roots.length != 1) ? roots[2].toFixed(2) : "complex", "0"];
+    const rootOne: string[] = [roots[0].toFixed(2), "0"];
+    const rootTwo: string[] = [(roots.length != 1) ? roots[1].toFixed(2) : "complex", "0"];
+    const rootThree: string[] = [(roots.length != 1) ? roots[2].toFixed(2) : "complex", "0"];
 
     // Get result elements
     (document.getElementById("result-equation") as HTMLInputElement).textContent = `${equation}`;
@@ -134,24 +130,21 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
 
 // Methods to solve for roots
 function trigonometricMethod(a: number, b: number, p: number, q: number): number[] {
-    const theta = (1 / 3) * Math.acos(-q / (2 * Math.sqrt(-Math.pow(p / 3, 3))));
+    const theta: number = (1 / 3) * Math.acos(-q / (2 * Math.sqrt(-Math.pow(p / 3, 3))));
 
     const calcRoot = (angle: number): number => {
-        return 2 * Math.sqrt(-p / 3) * Math.cos(angle) -b / (3 * a);
+        return 2 * Math.sqrt(-p / 3) * Math.cos(angle) - b / (3 * a);
     }
 
-    const rootOne = calcRoot(theta);
-    const rootTwo = calcRoot(theta + 2 * Math.PI / 3);
-    const rootThree = calcRoot(theta + 4 * Math.PI / 3);
+    const rootOne: number = calcRoot(theta);
+    const rootTwo: number = calcRoot(theta + 2 * Math.PI / 3);
+    const rootThree: number = calcRoot(theta + 4 * Math.PI / 3);
 
     return [rootOne, rootTwo, rootThree];
 }
 
 function cardanosMethod(a: number, b: number, p: number, q: number): number {
-    // const m = (-q / 2);
-    // const n = Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3));
-    const root = Math.cbrt((-q / 2) + Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) + Math.cbrt((-q / 2) - Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) - b / (3 * a);
-    return root;
+    return Math.cbrt((-q / 2) + Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) + Math.cbrt((-q / 2) - Math.sqrt(Math.pow(q / 2, 2) + Math.pow(p / 3, 3))) - b / (3 * a)
 }
 
 // Form submission
@@ -167,29 +160,29 @@ form?.addEventListener("submit", (event) => {
     const d: number = Number(formData.get("d"));
 
     if (a != 0) { // a value cannot be 0
-        const p = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
-        const q = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
+        const p: number = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
+        const q: number = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
 
-        const discriminant = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
-        const equation = getCubicEquation(a, b, c, d);
+        const discriminant: number = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
+        const equation: string = getCubicEquation(a, b, c, d);
 
         // Root cases
         if (discriminant < 0) { // three distinct roots 
-            const roots = trigonometricMethod(a, b, p, q);
+            const roots: number[] = trigonometricMethod(a, b, p, q);
             displayResults(equation, a, b, c, d, p, q, discriminant, [roots[0], roots[1], roots[2]]);
         } else if (discriminant > 0) { // one real root and two complex roots
-            const root = cardanosMethod(a, b, p, q);
+            const root: number = cardanosMethod(a, b, p, q);
             displayResults(equation, a, b, c, d, p, q, discriminant, [root]);
         } else { // one real root with a double, or a triple root
-            const rootOne = cardanosMethod(a, b, p, q);
+            const rootOne: number = cardanosMethod(a, b, p, q);
             if (p === 0 && q === 0) { // triple root
                 displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootOne, rootOne]);
             } else { // one real root with a double
-                const rootTwo = Math.cbrt(q / 2) - b / (3 * a);
+                const rootTwo: number = Math.cbrt(q / 2) - b / (3 * a);
                 displayResults(equation, a, b, c, d, p, q, discriminant, [rootOne, rootTwo, rootTwo]);
             }
         }
     } else { // give an alert when a = 0
-        alert("Coefficient a cannot be 0. Please enter a valid cubic equation.");
+        alert("Coefficient a cannot be 0");
     }
 })
