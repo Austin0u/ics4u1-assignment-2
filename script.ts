@@ -86,7 +86,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     ctx.strokeStyle = "#E49273";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    for (let x = -gridSize / 2; x < gridSize / 2; x += gridSize / 125) { // smaller step = more detailed curve. Auto adjusts to grid size/scale
+    for (let x = -gridSize / 2; x < gridSize / 2; x += 0.15) { // smaller step = more detailed curve.
         const cx = toCanvasX(x);
         const cy = toCanvasY(a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d); // use abcd values to calculate y for each x
         
