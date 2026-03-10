@@ -1,5 +1,4 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
-const resultsContainer = document.getElementById("results-container") as HTMLElement;
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -34,8 +33,7 @@ function getCubicEquation(a: number, b: number, c: number, d: number): string {
         equation += sign + Math.abs(d);
     }
 
-    equation += " = 0";
-    return equation;
+    return (equation += " = 0");
 }
 
 function drawGraph(a: number, b: number, c: number, d: number, roots: number[]): void {
@@ -59,6 +57,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     // Draw grid
     ctx.strokeStyle = "#e0e0e0";
     ctx.lineWidth = 0.5;
+
     for (let x = -gridSize / 2; x <= gridSize / 2; x++) { // vertical lines
         const cx: number = toCanvasX(x);
         ctx.beginPath();
@@ -66,6 +65,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
         ctx.lineTo(cx, HEIGHT);
         ctx.stroke();
     }
+
     for (let y = -gridSize / 2; y <= gridSize / 2; y++) { // horizontal lines 
         const cy = toCanvasY(y);
         ctx.beginPath();
@@ -89,7 +89,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
     for (let x = -gridSize / 2; x < gridSize / 2; x += 0.15) { // smaller step = more detailed curve.
         const cx = toCanvasX(x);
         const cy = toCanvasY(a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d); // use abcd values to calculate y for each x
-        
+
         ctx.lineTo(cx, cy)
     }
     ctx.stroke();
@@ -106,7 +106,7 @@ function drawGraph(a: number, b: number, c: number, d: number, roots: number[]):
 };
 
 function displayResults(equation: string, a: number, b: number, c: number, d: number, p: number, q: number, discriminant: number, roots: number[]): void {
-    resultsContainer.style.visibility = "visible";
+    (document.getElementById("results-container") as HTMLElement).style.visibility = "visible";
 
     // format roots for display (and determine if there are complex roots)
     roots.sort((a, b) => a - b); // to sort roots by x
@@ -153,7 +153,6 @@ form?.addEventListener("submit", (event) => {
 
     // form data
     const formData = new FormData(form);
-
     const a: number = Number(formData.get("a"));
     const b: number = Number(formData.get("b"));
     const c: number = Number(formData.get("c"));
@@ -162,8 +161,7 @@ form?.addEventListener("submit", (event) => {
     if (a != 0) { // a value cannot be 0
         const p: number = (3 * a * c - Math.pow(b, 2)) / (3 * a * a);
         const q: number = (27 * a * a * d - 9 * a * b * c + 2 * Math.pow(b, 3)) / (27 * Math.pow(a, 3));
-
-        const discriminant: number = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
+        const discriminant: number = (q / 2) * (q / 2) + (p / 3) * (p / 3) * (p / 3); // Math.pow() causes some issues in some cases
         const equation: string = getCubicEquation(a, b, c, d);
 
         // Root cases
