@@ -12,7 +12,7 @@
 <body>
   <div id="app">
     <div class="container">
-      <img id="cat" src="images/cat.jpg" alt="image">
+      <img id="cat" src="images/cat.jpg" alt="A cat on a computer">
       <h1 class="title">Cubic Solver</h1>
       <form id="cubic-form">
         <div class="inputs-container">
@@ -36,7 +36,7 @@
         <input type="submit" id="submit-button" value="Solve Cubic" />
       </form>
     </div>
-    <div id="results-container" style="visibility: hidden"> <!-- to make it hidden immediately -->
+    <div id="results-container" style="visibility: hidden"> <!-- hidden at start -->
       <h3 id="result-equation"></h3>
       <div class="results-layout">
         <div class="data-section">
@@ -84,7 +84,8 @@
         </div>
       </div>
     </div>
-    <script type="module" src="/script.ts"></script>
+  </div>
+  <script type="module" src="/script.ts"></script>
 </body>
 
 </html>
