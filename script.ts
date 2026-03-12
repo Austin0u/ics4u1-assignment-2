@@ -1,5 +1,4 @@
 const form = document.getElementById("cubic-form") as HTMLFormElement;
-type Point = { x: string, y: string }; // use objects for cleaner "x" and "y" instead of array indexing
 
 // Displaying results
 function getCubicEquation(a: number, b: number, c: number, d: number): string {
@@ -111,9 +110,9 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
 
     // format roots for display (and determine if there are complex roots)
     roots.sort((a, b) => a - b); // to sort roots by x
-    const rootOne: Point = {x: roots[0].toFixed(2), y: "0"}; 
-    const rootTwo: Point = {x: (roots.length !== 1) ? roots[1].toFixed(2) : "complex", y: "0"};
-    const rootThree: Point = {x: (roots.length !== 1) ? roots[2].toFixed(2) : "complex", y: "0"};
+    const rootOne: string = roots[0].toFixed(2); 
+    const rootTwo: string = (roots.length !== 1) ? roots[1].toFixed(2) : "complex";
+    const rootThree: string = (roots.length !== 1) ? roots[2].toFixed(2) : "complex";
    
     // Updates text content of result elements
     const updateElement = (id: string, value: string): void => {
@@ -124,12 +123,12 @@ function displayResults(equation: string, a: number, b: number, c: number, d: nu
     updateElement("result-p", p.toFixed(5));
     updateElement("result-q", q.toFixed(5));
     updateElement("result-discriminant", discriminant.toFixed(5));
-    updateElement("root1-x", rootOne.x);
-    updateElement("root1-y", rootOne.y);
-    updateElement("root2-x", rootTwo.x);
-    updateElement("root2-y", rootTwo.y);
-    updateElement("root3-x", rootThree.x);
-    updateElement("root3-y", rootThree.y);
+    updateElement("root1-x", rootOne);
+    updateElement("root1-y", "0");
+    updateElement("root2-x", rootTwo);
+    updateElement("root2-y", "0");
+    updateElement("root3-x", rootThree);
+    updateElement("root3-y", "0");
     drawGraph(a, b, c, d, roots);
 }
 
